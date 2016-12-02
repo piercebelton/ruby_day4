@@ -1,4 +1,5 @@
 require 'rspec'
+require 'date'
 require_relative 'task_list'
 require_relative 'due_task'
 
@@ -8,76 +9,73 @@ describe "TaskList" do
     expect{TaskList.new}.to_not raise_error
   end
 
-  it "should not raise error for string method" do
-    tlist = TaskList.new
-    expect{tlist}.to_not raise_error
+  # Create a tlist object for rest of tests
+  tlist = TaskList.new
+  today = Date.today
+
+  it "should return a string with Tlist's task objects" do
+    expect(tlist.to_s).to be_a String
   end
 
-  it "should add tasks to task list" do
-    tlist = TaskList.new
-    t = Task.new
-    expect{tlist.add_task(t)}.to change{tlist.tasks?}
+  it "should add task to task list" do
+    t_incomplete = Task.new
+    expect{tlist.add_task(t_incomplete)}.to change{tlist.tasks}
   end
 
-  it "should return array of complete & incomplete tasks" do
-    tc = Task.new
-    tc.complete
-    ti = Task.new
+  it "should return array of complete or incomplete tasks" do
+    # make a completed task
+    t_completed = Task.new
+    t_completed.complete
 
-    tlist = TaskList.new
-    tlist.add_task(tc)
-    tlist.add_task(ti)
+    # tlist currently contains one incomplete task obj
+    # add one completed task for a total of two task objs
+    tlist.add_task(t_completed)
 
-    expect((tlist.get_complete).length).to be(1)
-    expect((tlist.get_incomplete).length).to be(1)
+    expect(tlist.get_complete).to be_a Array
+    expect((tlist.get_complete).length).to eq(1)
+    expect(tlist.get_incomplete).to be_a Array
+    expect((tlist.get_incomplete).length).to eq(1)
   end
 
-  it "should return arrays of incomplete tasks that are due today" do
-    tdt = DueTask.new
-    tdt.set_due_date("2016-12-01")
-    tndt = DueTask.new
-    tndt.set_due_date("2018-04-16")
+  it "should return array of incomplete tasks due today" do
+    # add incomplete DueTask object due today
+    t_due = DueTask.new
+    t_due.set_due_date(today.to_s)
+    tlist.add_task(t_due)
+    # add incomplete DueTask not due today
+    t_notdue = DueTask.new
+    t_notdue.set_due_date("2018-04-16")
+    tlist.add_task(t_notdue)
 
-    tlist = TaskList.new
-    tlist.add_task(tdt)
-    tlist.add_task(tndt)
-
-    expect((tlist.incomplete_due_today?).length).to be(1)
-    
+    expect((tlist.incomplete_due_today).length).to eq(1)
   end
 
-  it "should return an array of incomplete tasks in order of due date" do
+  it "should return array of incomplete tasks ordered by due date" do
+    due_task1 = DueTask.new
+    due_task1.set_due_date("2016-12-02")
+    due_task2 = DueTask.new
+    due_task2.set_due_date("2018-04-16")
 
-    tdt = DueTask.new
-    tdt.set_due_date("2016-12-01")
-    tndt = DueTask.new
-    tndt.set_due_date("2018-04-16")
+    tlist.add_task(due_task1)
+    tlist.add_task(due_task2)
 
-    tlist = TaskList.new
-    tlist.add_task(tdt)
-    tlist.add_task(tndt)
-
-    expect((tlist.incomplete_ordered?).length).to eq(2)
-
+    # tlist object now contains 4 duetask objects
+    # create incomplete ordered list for testing
+    incomplete_list = tlist.incomplete_ordered
+    expect(incomplete_list.length).to eq(4)
+    expect(incomplete_list).to be_a Array
+    # test that items are sorted (small to large) correctly by comparing their due dates
+    expect((incomplete_list[0]).due_date).to be <= ((incomplete_list[1]).due_date)
+    expect((incomplete_list[1]).due_date).to be <= ((incomplete_list[2]).due_date)
   end
 
-  it "should return an array of incomplete tasks, first in order by date, and then the tasks with no dates" do
-
-    tdt = DueTask.new
-    tdt.set_due_date("2016-12-01")
-    tndt = DueTask.new
-    tndt.set_due_date("2018-04-16")
-    t = Task.new
-    t2 = Task.new
-
-    tlist = TaskList.new
-    tlist.add_task(tdt)
-    tlist.add_task(tndt)
-    tlist.add_task(t)
-    tlist.add_task(t2)
-
-    expect((tlist.sort_both_kinds).length).to eq(4)
-
+  it "should return array of incomplete tasks beginning with sorted DueTasks" do
+    # tlist currently contains 5 incomplete tasks- 4 are DueTask objects - one is Task object
+    expect((tlist.sort_both_kinds).length).to eq(5)
+    # array indexes 0-3 should be DueTask objects-> test index 1
+    expect((tlist.sort_both_kinds)[1]).to be_a DueTask
+    # last element in array should be the only Task object
+    expect((tlist.sort_both_kinds)[4]).to be_a Task
   end
 
 end

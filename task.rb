@@ -1,10 +1,9 @@
 
-
 class Task
 
   def initialize
-    @title = ""
-    @description = ""
+    @title = "undefined"
+    @description = "undefined"
     @completed = false
   end
 
@@ -17,7 +16,7 @@ class Task
   end
 
   def to_s
-    "Task Title: #{@title}. Task Description: #{@description}. Task Status: #{@completed}."
+    "Task Title: #{@title}. Task Description: #{@description}. Task Completed: #{@completed}."
   end
 
   def assign(title, description)

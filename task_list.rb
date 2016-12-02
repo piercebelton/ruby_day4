@@ -12,11 +12,11 @@ class TaskList
   # Signature: -> String
   def to_s
     strAccumulator = ""
-    @tasks.each { |task| strAccumulator +=  task.to_s }
+    @tasks.each { |task| strAccumulator +=  task.to_s + "\n"}
     strAccumulator
   end
 
-  def tasks?
+  def tasks
     @tasks
   end
 
@@ -46,55 +46,46 @@ class TaskList
     a
   end
 
-  def incomplete_due_today?
+  # Signature: --> Array of Task objects
+  def incomplete_due_today
     a = get_incomplete
     a2 = []
     a.each do |task|
-      if task.class == DueTask && task.due_date? == Date.today
+      if task.class == DueTask && task.due_date == Date.today
         a2 << task
       end
     end
     a2
   end
 
-  def incomplete_ordered?
+  # Signature: returns sorted array
+  def incomplete_ordered
     a = get_incomplete
-    a2 = []
+    ordered = []
 
     a.each do |task|
-      if task.class == DueTask
-        a2 << task
+      if task.class == DueTask && task.completed? == false
+        ordered << task
       end
     end
-    a2.sort do |shoe, banana| shoe.due_date? <=> banana.due_date? end
-    a2
+    # sort by the object's due date
+    ordered.sort_by! {|obj| obj.due_date}
+    # return the ordered array
+    ordered
   end
 
+  # Signature: returns sorted array
   def sort_both_kinds
-    a = incomplete_ordered?
+    # append incomplete Task objs to ordered list of incomplete DueDate objs
+    a = incomplete_ordered
     b = get_incomplete
-    b.each do |beach|
-      if beach.class != DueTask
-        a << beach
+
+    b.each do |task|
+      if task.class != DueTask
+        a << task
       end
     end
     a
   end
 
 end
-
-tdt = DueTask.new
-tdt.set_due_date("2016-12-01")
-tndt = DueTask.new
-tndt.set_due_date("2018-04-16")
-t = Task.new
-t2 = Task.new
-
-tlist = TaskList.new
-tlist.add_task(tdt)
-tlist.add_task(tndt)
-tlist.add_task(t)
-tlist.add_task(t2)
-
-puts tlist.sort_both_kinds
-puts tlist.tasks?
