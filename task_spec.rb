@@ -14,7 +14,7 @@ describe "Task" do
 
   it "should take user input and create a task" do
     t = Task.new
-    expect{t.assign("t", "d")}.to change{t.title}.from("").to("t")
+    expect{t.assign("t", "d")}.to change{t.title}.from("undefined").to("t")
     expect{t.assign("t", "c")}.to change{t.description}.from("d").to("c")
   end
 

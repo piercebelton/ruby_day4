@@ -14,7 +14,7 @@ describe "DueTask" do
   end
 
   it "should set due date for DueTask object to be a Date class object" do
-    expect{due_t.set_due_date("1992-05-02")}.to change{due_t.due_date?}.from(0).to be_a Date
+    expect{due_t.set_due_date("1992-05-02")}.to change{due_t.due_date}.from("undefined").to be_a Date
   end
 
 end

@@ -19,6 +19,7 @@ class Task
     "Task Title: #{@title}. Task Description: #{@description}. Task Completed: #{@completed}."
   end
 
+  #accepts two strings, adjusts title and description for task
   def assign(title, description)
     @title = title
     @description = description

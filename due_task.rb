@@ -8,12 +8,14 @@ class DueTask < Task
     @due_date = "undefined"
   end
 
+  # Purpose: print string for all attributes of DueTask object
   def to_s
     super + " Task is due: #{@due_date.to_s}."
   end
 
-  # Purpose: due-date setter
+  # Purpose: due_date setter
   # Signature: takes date string in "YYYY-MM-DD" format
+  # => sets @due_date attr to be a Date class object
   def set_due_date(date_string)
     @due_date = Date.parse(date_string)
   end

@@ -61,7 +61,7 @@ describe "TaskList" do
 
     # tlist object now contains 4 duetask objects
     # create incomplete ordered list for testing
-    incomplete_list = tlist.incomplete_ordered
+    incomplete_list = tlist.sort_incomplete_by_date
     expect(incomplete_list.length).to eq(4)
     expect(incomplete_list).to be_a Array
     # test that items are sorted (small to large) correctly by comparing their due dates

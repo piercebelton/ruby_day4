@@ -1,6 +1,7 @@
 require 'date'
 require_relative 'task'
 require_relative 'due_task'
+require_relative 'anniversary'
 
 
 class TaskList
@@ -59,7 +60,7 @@ class TaskList
   end
 
   # Signature: returns sorted array
-  def incomplete_ordered
+  def sort_incomplete_by_date
     a = get_incomplete
     ordered = []
 
@@ -77,7 +78,7 @@ class TaskList
   # Signature: returns sorted array
   def sort_both_kinds
     # append incomplete Task objs to ordered list of incomplete DueDate objs
-    a = incomplete_ordered
+    a = sort_incomplete_by_date
     b = get_incomplete
 
     b.each do |task|
@@ -89,3 +90,31 @@ class TaskList
   end
 
 end
+
+t1 = Task.new
+t2 = Task.new
+dt1 = DueTask.new
+dt1.set_due_date("2007-01-02")
+dt2 = DueTask.new
+dt2.set_due_date("2006-01-07")
+a1 = Anniversary.new
+a1.set_due_date("2005-07-30")
+a2 = Anniversary.new
+a2.set_due_date("2008-09-09")
+
+tlist = TaskList.new
+tlist.add_task(t1)
+tlist.add_task(t2)
+tlist.add_task(dt1)
+tlist.add_task(dt2)
+tlist.add_task(a1)
+tlist.add_task(a2)
+
+
+
+puts tlist.to_s
+puts "\n \n"
+puts tlist.sort_incomplete_by_date
+
+puts " NOW SORT BOF OF EM"
+puts tlist.sort_both_kinds
